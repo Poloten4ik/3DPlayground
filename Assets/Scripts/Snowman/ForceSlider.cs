@@ -8,10 +8,10 @@ public class ForceSlider : MonoBehaviour
     [SerializeField]
     Slider slider;
 
-    PlayerMovement player;
+    SnowmanMovement player;
     private void Start()
     {
-        player = FindObjectOfType<PlayerMovement>();
+        player = FindObjectOfType<SnowmanMovement>();
     }
 
     // Update is called once per frame

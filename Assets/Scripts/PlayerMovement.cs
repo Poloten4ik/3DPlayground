@@ -4,110 +4,63 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
-    private float speed = 10;
+    [Header("Movement config")]
+    [SerializeField] private float moveSpeed = 10f;
 
-    [SerializeField]
-    private float rotationSpeed = 11;
+    [Header("Rotation config")]
+    [SerializeField] private float rotationSpeed = 100f;
 
-    [SerializeField]
-    private float jumpForce = 10;
+    [Header("Gravity")]
+    [SerializeField] private float jumpHeight = 10f;
+    [SerializeField] private float gravityScale = 2;
 
-    [Header("Pushing Objects")]
-    [SerializeField]
-    private GameObject objectCenter;
 
-    [SerializeField]
-    private float objectRadious = 1f;
+    [Header("references")]
+    [SerializeField] private CharacterController controller;
 
-    [SerializeField]
-    private LayerMask objectsMask;
-
-    [SerializeField]
-    private float maxPushForce = 1f;
-
-    [SerializeField]
-    private float pushHeight = 5f;
-
-    Rigidbody rb;
-
-    float pushForce;
-    bool isGoingUp;
+    private float gravity;
 
     private void Update()
     {
-        if (Input.GetButtonDown("Jump"))
+        Rotate();
+        Move();
+    }
+
+    private void Move()
+    {
+        float inputH = Input.GetAxis("Horizontal");
+        float inputV = Input.GetAxis("Vertical");
+
+        Vector3 moveDirection = transform.forward * inputV + transform.right * inputH;
+
+        if (moveDirection.magnitude > 1)
         {
-            rb.AddForce(Vector3.up * jumpForce);
+            moveDirection.Normalize();
         }
 
-        if (Input.GetMouseButtonDown(0))
+       
+        if (controller.isGrounded)
         {
-            pushForce = 0;
-            isGoingUp = true;
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            if (isGoingUp)
+            gravity = -0.1f;
+            if (Input.GetButtonDown("Jump"))
             {
-                pushForce += maxPushForce * Time.deltaTime;
-                if (pushForce >= maxPushForce)
-                {
-                    isGoingUp = false;
-                }
+                gravity = jumpHeight;
             }
-            else
-            {
-                pushForce -= maxPushForce * Time.deltaTime;
-                if (pushForce <= 0)
-                {
-                    isGoingUp = true;
-                }
-            }
-            print(pushForce);
-        }
 
-        if (Input.GetMouseButtonUp(0))
+        }
+        else
         {
-            Collider[] colliders = Physics.OverlapSphere(objectCenter.transform.position, objectRadious, objectsMask);
-            foreach(Collider col in colliders)
-            {
-                Rigidbody colRb = col.GetComponent<Rigidbody>();
-
-                Vector3 forceDirection = transform.forward * pushForce;
-                forceDirection.y = pushHeight;
-                colRb.AddForce(forceDirection.normalized * pushForce, ForceMode.Impulse);
-            }
+            gravity += gravityScale * Physics.gravity.y * Time.deltaTime;
         }
+
+        moveDirection.y = gravity;
+        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
     }
 
-    void Start()
+    private void Rotate()
     {
-        rb = GetComponent<Rigidbody>();
+        float mouseHorizontal = Input.GetAxis("Mouse X");
+
+        transform.Rotate(Vector3.up, mouseHorizontal * rotationSpeed * Time.deltaTime);
     }
-
-    public float GetForcePercentage()
-    {
-        return pushForce / maxPushForce;
-    }
-
-    private void FixedUpdate()
-    {
-        float inputHorizontal = Input.GetAxis("Horizontal");
-        float inputVertical = Input.GetAxis("Vertical");
-
-        //rb.velocity = transform.forward * inputVertical * speed;
-
-        rb.AddForce(transform.forward * inputVertical * speed);
-
-        transform.RotateAround(transform.position, Vector3.up, inputHorizontal * rotationSpeed);
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(objectCenter.transform.position, objectRadious);
-
-    }
-
 }
