@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 startPosition;
     private bool isResetting;
 
+    private Camera mainCamera;
     public void DoDamage()
     {
         //TODO check lives;
@@ -57,6 +58,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         startPosition = transform.position;
+        mainCamera = Camera.main;
+
     }
 
     private void Awake()
@@ -77,7 +80,6 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        Rotate();
         Move();
     }
 
@@ -86,7 +88,14 @@ public class PlayerMovement : MonoBehaviour
         float inputH = Input.GetAxis("Horizontal");
         float inputV = Input.GetAxis("Vertical");
 
-        Vector3 moveDirection = transform.forward * inputV + transform.right * inputH;
+        Vector3 forward = mainCamera.transform.forward;
+        forward.y = 0;
+        forward.Normalize()
+;        Vector3 right = mainCamera.transform.right;
+        right.y = 0;
+        right.Normalize();
+
+        Vector3 moveDirection = forward * inputV + right * inputH;
 
         if (moveDirection.magnitude > 1)
         {
@@ -110,12 +119,5 @@ public class PlayerMovement : MonoBehaviour
 
         moveDirection.y = gravity;
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-    }
-
-    private void Rotate()
-    {
-        float mouseHorizontal = Input.GetAxis("Mouse X");
-
-        transform.Rotate(Vector3.up, mouseHorizontal * rotationSpeed * Time.deltaTime);
     }
 }
