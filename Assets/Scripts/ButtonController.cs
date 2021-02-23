@@ -6,7 +6,7 @@ public class ButtonController : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        print("hello");
+        
     }
 
 }

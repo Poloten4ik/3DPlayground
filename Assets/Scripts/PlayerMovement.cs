@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 10f;
 
     [Header("Rotation config")]
-    [SerializeField] private float rotationSpeed = 100f;
+    [SerializeField] private float rotationSpeed = 1f;
 
     [Header("Gravity")]
     [SerializeField] private float jumpHeight = 10f;
@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("references")]
     [SerializeField] private CharacterController controller;
+    [SerializeField] private Animator anim;
 
     private float gravity;
 
@@ -32,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     public void DoDamage()
     {
         //TODO check lives;
-
+        anim.SetTrigger("Death");
         ResetPosition();
     }
 
@@ -47,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
     private void ResetPosition()
     {
         isResetting = true;
-        transform.DOMove(startPosition, 1f).OnComplete(FinishReset);
+        transform.DOMove(startPosition, 1f).SetDelay(1f).OnComplete(FinishReset);
         //StartCoroutine(ResetPositionCoroutine());
     }
 
@@ -102,7 +103,19 @@ public class PlayerMovement : MonoBehaviour
             moveDirection.Normalize();
         }
 
-       
+        if(Mathf.Abs(inputH) > 0 || Mathf.Abs(inputV) > 0)
+        {
+            anim.SetBool("Running", true);
+            //transform.rotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDirection),rotationSpeed);
+           
+        }
+        else
+        {
+            anim.SetBool("Running", false);
+        }
+
+
         if (controller.isGrounded)
         {
             gravity = -0.1f;
@@ -115,6 +128,21 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             gravity += gravityScale * Physics.gravity.y * Time.deltaTime;
+        }
+
+        //bool isJumping = gravity > 0 || gravity < -0.2f && !controller.isGrounded;
+        //anim.SetBool("Jump", isJumping);
+        if (gravity > 0)
+        {
+            anim.SetInteger("Gravity", 1);
+        }
+        else if (gravity < -0.1f)
+        {
+            anim.SetInteger("Gravity", -1);
+        }
+        else
+        {
+            anim.SetInteger("Gravity", 0);
         }
 
         moveDirection.y = gravity;
