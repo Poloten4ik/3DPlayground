@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+  public void MeleeAttackStart()
     {
-        
+        print("start");
     }
-
-    // Update is called once per frame
-    void Update()
+    public void MeleeAttackEnd()
     {
-        
+        print("end");
     }
 }
