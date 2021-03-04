@@ -7,6 +7,8 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     private int damage = 40;
 
+    [SerializeField] private ParticleSystem attackEffect;
+
     private Collider col;
     private void Start()
     {
@@ -17,11 +19,13 @@ public class Weapon : MonoBehaviour
     public void AttackStart()
     {
         col.enabled = true;
+        attackEffect.Play();
     }
 
     public void AttackEnd()
     {
         col.enabled = false;
+        attackEffect.Stop();
     }
 
     private void OnTriggerEnter(Collider other)
