@@ -758,21 +758,28 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.088842474
+      - time: 0.027588915
         functionName: MeleeAttackStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 1
         messageOptions: 0
-      - time: 0.3317473
+      - time: 0.25213677
         functionName: MeleeAttackEnd
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.6882761
+      - time: 0.32859492
+        functionName: ComboStart
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.77232176
         functionName: ComboEnd
         data: 
         objectReferenceParameter: {instanceID: 0}
